@@ -9,6 +9,10 @@ The format is based on the [KeepAChangeLog] project.
 
 ### Added
 - [#443] Ability to specify additional supported claims for oic.Provider
+- [#334] Ability to specify custom template rendering function for form_post and verify_logout
+
+### Removed
+- [#334] Removed template_lookup and template kwargs from oic.Provider
 
 ### Fixed
 - [#430] Audience of a client assertion is endpoint dependent.
@@ -21,6 +25,7 @@ The format is based on the [KeepAChangeLog] project.
 [#399]: https://github.com/OpenIDC/pyoidc/issues/399
 [#436]: https://github.com/OpenIDC/pyoidc/pull/436
 [#443]: https://github.com/OpenIDC/pyoidc/pull/443
+[#334]: https://github.com/OpenIDC/pyoidc/issues/334
 
 ## 0.12.0 [2017-09-25]
 
