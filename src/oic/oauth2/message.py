@@ -407,9 +407,9 @@ class Message(MutableMapping):
                     self._dict[skey] = val
 
     def _add_value_list(self, skey, vtype, key, val, _deser, null_allowed):
-        """Add value that is supposed to be a list.
+        """Add value with internal type (``vtype``) of ``list`` to the message object.
 
-        :param skey: String representation of list
+        :param skey: String representation of key
         :param vtype: Type of object in list
         :param key: Key for the object
         :param val: Value of the object
@@ -419,15 +419,16 @@ class Message(MutableMapping):
         if isinstance(val, vtype):
             if issubclass(vtype, Message):
                 self._dict[skey] = [val]
-            elif _deser:
+            elif _deser is not None:
                 try:
                     self._dict[skey] = _deser(val, sformat="urlencoded")
                 except Exception as exc:
                     raise DecodeError(ERRTXT % (key, exc))
             else:
                 setattr(self, skey, [val])
-        elif isinstance(val, list):
-            if _deser:
+            return
+        if isinstance(val, list):
+            if _deser is not None:
                 try:
                     val = _deser(val, sformat="dict")
                 except Exception as exc:
@@ -444,19 +445,19 @@ class Message(MutableMapping):
             else:
                 for v in val:
                     if not isinstance(v, vtype):
-                        raise DecodeError(
-                            ERRTXT % (key, "type != %s (%s)" % (vtype, type(v))))
-
+                        raise DecodeError(ERRTXT % (key, "type != %s (%s)" % (vtype, type(v))))
             self._dict[skey] = val
-        elif isinstance(val, dict):
+            return
+        if isinstance(val, dict):
             try:
                 val = _deser(val, sformat="dict")
             except Exception as exc:
                 raise DecodeError(ERRTXT % (key, exc))
             else:
                 self._dict[skey] = val
-        else:
-            raise DecodeError(ERRTXT % (key, "type != %s" % vtype))
+                return
+
+        raise DecodeError(ERRTXT % (key, "type != %s" % vtype))
 
     def to_json(self, lev=0, indent=None):
         if lev:
